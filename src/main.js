@@ -59,8 +59,8 @@ function init() {
   // 5. Setup Nested Groups for independent animations
   modelGroup = new THREE.Group();        // Controlled by GSAP ScrollTrigger
   if (window.innerWidth > 768) {
-    modelGroup.position.x = 0.9;         // Shift more to the right on desktop
-    modelGroup.position.y = -0.35;        // Shift down from the top to prevent going under header/opaque layers
+    modelGroup.position.x = 1.2;         // Shift further right on desktop
+    modelGroup.position.y = -0.55;        // Shift further down to prevent going under header/opaque layers
   }
   floatingGroup = new THREE.Group();     // Controlled by Sine float loop
   interactiveGroup = new THREE.Group();  // Controlled by Mouse Drag/Hover
@@ -134,7 +134,7 @@ function setupShadowPlane() {
   shadowPlane.rotation.x = -Math.PI / 2;
   shadowPlane.position.y = -1.5;
   if (window.innerWidth > 768) {
-    shadowPlane.position.x = 0.9; // Align shadow with initial model offset
+    shadowPlane.position.x = 1.2; // Align shadow with initial model offset
   }
   shadowPlane.receiveShadow = true;
   scene.add(shadowPlane);
@@ -355,7 +355,7 @@ function loadVespaModel() {
 
         // Scale model dynamically based on screen width for high impact and interactivity
         const maxDim = Math.max(size.x, size.y, size.z);
-        const baseScaleMultiplier = window.innerWidth > 768 ? 3.2 : 2.2;
+        const baseScaleMultiplier = window.innerWidth > 768 ? 3.75 : 2.25;
         const scale = baseScaleMultiplier / maxDim;
         vespaModel.scale.setScalar(scale);
 
