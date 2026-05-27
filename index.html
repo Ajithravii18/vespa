@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Defy gravity with the all-new Vespa Zero-G. Redefining the commute with weightless electromagnetic suspension and signature Electric Sunflower Yellow design. Explore in 3D.">
+  <title>Vespa // Zero-G — Defy Gravity</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+  <!-- Premium Preloader -->
+  <div id="preloader" class="preloader">
+    <div class="preloader-content">
+      <div class="preloader-logo">VESPA // ZERO-G</div>
+      <div class="preloader-bar-bg">
+        <div id="preloader-bar" class="preloader-bar"></div>
+      </div>
+      <div class="preloader-percentage"><span id="load-percentage">0</span>%</div>
+      <div class="preloader-status">Initializing weightless systems...</div>
+    </div>
+  </div>
+
+  <!-- WebGL Canvas Background -->
+  <div class="canvas-container">
+    <canvas id="webgl-canvas"></canvas>
+  </div>
+
+  <!-- Color Customizer Sidebar -->
+  <div class="color-customizer">
+    <div class="color-customizer-label">COLOR</div>
+    <div class="color-swatches">
+      <button class="swatch active" data-color="#ffdb15" style="background-color: #ffdb15;" title="Sunflower Yellow"></button>
+      <button class="swatch" data-color="#3a86c8" style="background-color: #3a86c8;" title="Ethereal Blue"></button>
+      <button class="swatch" data-color="#e85d75" style="background-color: #e85d75;" title="Elysian Coral"></button>
+      <button class="swatch" data-color="#2c3539" style="background-color: #2c3539;" title="Space Charcoal"></button>
+      <button class="swatch" data-color="#84a98c" style="background-color: #84a98c;" title="Ethereal Mint"></button>
+    </div>
+  </div>
+
+  <!-- Smooth Scroll Wrapper -->
+  <div id="scroll-wrapper">
+
+    <!-- Header Navigation -->
+    <header class="header">
+      <div class="header-logo">VESPA <span class="divider">//</span> ZERO-G</div>
+      <nav class="header-nav">
+        <a href="#hero" class="nav-link active">The Icon</a>
+        <a href="#features" class="nav-link">The Tech</a>
+        <a href="#explode-section" class="nav-link">The Experience</a>
+      </nav>
+      <a href="#cta" class="btn btn-black pre-order-btn">Pre-Order Now</a>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      
+      <!-- Section 1: Hero -->
+      <section id="hero" class="hero-section">
+        <div class="hero-content">
+          <div class="hero-eyebrow fade-up">Yellow, Light, Libre.</div>
+          <h1 class="hero-title fade-up delay-1">Defy gravity.<br>Redefine the commute.</h1>
+          <p class="hero-quote fade-up delay-2">
+            "Weightlessness is not the absence of gravity.<br>It is the freedom to rise above it."
+          </p>
+          <div class="explore-hint fade-up delay-3">
+            <span class="pulse-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" fill="currentColor"/>
+                <path d="M11 6H13V12H17V14H11V6Z" fill="currentColor"/>
+                <path d="M16 11.5L19 14.5L16 17.5V11.5Z" fill="currentColor"/>
+              </svg>
+            </span>
+            <span>[ Explore in 3D: Drag to Rotate ]</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Feature Grid -->
+      <section id="features" class="features-section">
+        <div class="section-container">
+          <div class="features-grid-header">
+            <div class="col-lbl">Feature</div>
+            <div class="col-lbl">The Philosophy</div>
+            <div class="col-lbl">The Spec</div>
+          </div>
+          
+          <div class="feature-row">
+            <div class="feature-name">
+              <span class="feature-number">01 /</span> Levity
+            </div>
+            <div class="feature-desc">
+              Crafted with ultra-light space-grade alloys. It doesn't just ride; it glides.
+            </div>
+            <div class="feature-spec">
+              0 lbs perceived weight
+            </div>
+          </div>
+
+          <div class="feature-row">
+            <div class="feature-name">
+              <span class="feature-number">02 /</span> Luminescence
+            </div>
+            <div class="feature-desc">
+              Coated in signature Electric Sunflower Yellow. Impossible to ignore.
+            </div>
+            <div class="feature-spec">
+              High-gloss UV coat
+            </div>
+          </div>
+
+          <div class="feature-row">
+            <div class="feature-name">
+              <span class="feature-number">03 /</span> Liberation
+            </div>
+            <div class="feature-desc">
+              Zero emissions. Zero friction. Pure, unadulterated freedom.
+            </div>
+            <div class="feature-spec">
+              100% Electric
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Mid-Page Quote Break -->
+      <section id="quote-break" class="quote-section">
+        <div class="quote-container">
+          <blockquote class="quote-text">
+            "Simplicity is the ultimate sophistication. But a yellow Vespa floating in mid-air? That is pure poetry."
+          </blockquote>
+          <cite class="quote-author">— The Modern Rider</cite>
+        </div>
+      </section>
+
+      <!-- Section 4: Interactive Scroll (Explosion) -->
+      <section id="explode-section" class="explode-section">
+        <!-- Sticky visual wrapper for 3D explanation copy -->
+        <div class="explode-container">
+          <div class="explode-content-left">
+            <div class="sticky-text-block text-block-1 active">
+              <h2 class="explode-title">Engineered for the Ethereal.</h2>
+              <p class="explode-subtitle">Scroll to see the architectural floating components.</p>
+            </div>
+            <div class="sticky-text-block text-block-2">
+              <h3 class="explode-feature-title">Magnetic Suspension</h3>
+              <p class="explode-feature-desc">
+                Floating on a bed of electromagnetic luxury. Zero friction. Zero contact. Maximum levitation.
+              </p>
+            </div>
+            <div class="sticky-text-block text-block-3">
+              <h3 class="explode-feature-title">Ergonomically Weightless</h3>
+              <p class="explode-feature-desc">
+                Designed to make the rider feel entirely unsupported, yet perfectly secure in mid-air posture.
+              </p>
+            </div>
+          </div>
+          <!-- Right side is empty to allow full view of the Vespa model as it explodes in the background -->
+          <div class="explode-space-right"></div>
+        </div>
+      </section>
+
+      <!-- Section 5: Call to Action & Footer -->
+      <section id="cta" class="cta-section">
+        <div class="cta-container">
+          <h2 class="cta-title">Bring Lightness to Your World.</h2>
+          <a href="#" class="btn btn-yellow cta-btn">Secure Your Zero-G Vespa</a>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-left">
+            © 2026 Vespa Futura. Designed for the skies, built for the streets.
+          </div>
+          <div class="footer-right">
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+            <a href="#" class="footer-link">Instagram</a>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- Main script -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
