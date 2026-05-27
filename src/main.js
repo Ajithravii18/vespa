@@ -59,7 +59,8 @@ function init() {
   // 5. Setup Nested Groups for independent animations
   modelGroup = new THREE.Group();        // Controlled by GSAP ScrollTrigger
   if (window.innerWidth > 768) {
-    modelGroup.position.x = 0.6;         // Shift slightly to the right on desktop for better layout balance
+    modelGroup.position.x = 0.9;         // Shift more to the right on desktop
+    modelGroup.position.y = -0.35;        // Shift down from the top to prevent going under header/opaque layers
   }
   floatingGroup = new THREE.Group();     // Controlled by Sine float loop
   interactiveGroup = new THREE.Group();  // Controlled by Mouse Drag/Hover
@@ -133,7 +134,7 @@ function setupShadowPlane() {
   shadowPlane.rotation.x = -Math.PI / 2;
   shadowPlane.position.y = -1.5;
   if (window.innerWidth > 768) {
-    shadowPlane.position.x = 0.6; // Align shadow with initial model offset
+    shadowPlane.position.x = 0.9; // Align shadow with initial model offset
   }
   shadowPlane.receiveShadow = true;
   scene.add(shadowPlane);
