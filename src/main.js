@@ -60,7 +60,7 @@ function init() {
   modelGroup = new THREE.Group();        // Controlled by GSAP ScrollTrigger
   if (window.innerWidth > 768) {
     modelGroup.position.x = 1.2;         // Shift further right on desktop
-    modelGroup.position.y = -0.55;        // Shift further down to prevent going under header/opaque layers
+    modelGroup.position.y = -0.85;        // Shift further down to prevent going under header/opaque layers
   }
   floatingGroup = new THREE.Group();     // Controlled by Sine float loop
   interactiveGroup = new THREE.Group();  // Controlled by Mouse Drag/Hover
