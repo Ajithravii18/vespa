@@ -246,125 +246,147 @@ function loadVespaModel() {
     }, 500);
   };
 
-  // Load the model from public folder
-  loader.load(
-    '/vespa.glb',
-    function (gltf) {
-      vespaModel = gltf.scene;
+  let retryCount = 0;
 
-      // Enable shadows for the model
-      vespaModel.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          
-          // Enhance materials for luxury feel
-          if (child.material) {
-            child.material.envMapIntensity = 1.5;
+  function loadModel(url) {
+    loader.load(
+      url,
+      function (gltf) {
+        vespaModel = gltf.scene;
+
+        // Enable shadows for the model
+        vespaModel.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
             
-            // Adjust body color slightly to enhance sunflower yellow if needed
-            if (child.name.includes('Main') && child.material.color) {
-              // Ensure body is glossy sunflower yellow
-              child.material.roughness = 0.15;
-              child.material.metalness = 0.1;
-              child.material.clearcoat = 1.0;
-              child.material.clearcoatRoughness = 0.05;
-            }
-            
-            // Store body materials for color changing customizer
-            if (child.material.name === 'Main') {
-              if (!bodyMaterials.includes(child.material)) {
-                bodyMaterials.push(child.material);
+            // Enhance materials for luxury feel
+            if (child.material) {
+              child.material.envMapIntensity = 1.5;
+              
+              // Adjust body color slightly to enhance sunflower yellow if needed
+              if (child.name.includes('Main') && child.material.color) {
+                // Ensure body is glossy sunflower yellow
+                child.material.roughness = 0.15;
+                child.material.metalness = 0.1;
+                child.material.clearcoat = 1.0;
+                child.material.clearcoatRoughness = 0.05;
               }
+              
+              // Store body materials for color changing customizer
+              if (child.material.name === 'Main') {
+                if (!bodyMaterials.includes(child.material)) {
+                  bodyMaterials.push(child.material);
+                }
 
-              // Inject custom GLSL shader code to color-swap ONLY the yellow paint on the GPU
-              child.material.onBeforeCompile = (shader) => {
-                shader.uniforms.uColorReplace = { value: new THREE.Color('#ffdb15') };
-                shader.uniforms.uUseReplace = { value: 0.0 };
+                // Inject custom GLSL shader code to color-swap ONLY the yellow paint on the GPU
+                child.material.onBeforeCompile = (shader) => {
+                  shader.uniforms.uColorReplace = { value: new THREE.Color('#ffdb15') };
+                  shader.uniforms.uUseReplace = { value: 0.0 };
 
-                shader.fragmentShader = 'uniform vec3 uColorReplace;\nuniform float uUseReplace;\n' + shader.fragmentShader;
+                  // Cleanly inject uniforms inside the common block
+                  shader.fragmentShader = shader.fragmentShader.replace(
+                    '#include <common>',
+                    `#include <common>
+                    uniform vec3 uColorReplace;
+                    uniform float uUseReplace;`
+                  );
 
-                shader.fragmentShader = shader.fragmentShader.replace(
-                  '#include <map_fragment>',
-                  `
-                  #include <map_fragment>
-                  if (uUseReplace > 0.01) {
-                    vec3 col = diffuseColor.rgb;
-                    // Calculate a smooth 'yellowness' gradient factor to handle anti-aliasing edges and shadow transitions
-                    float yellowness = smoothstep(0.18, 0.32, (col.r + col.g) * 0.5 - col.b);
-                    if (yellowness > 0.01) {
-                      // Extract shading details to keep shadows/highlights photorealistic
-                      float originalLuminance = dot(col, vec3(0.299, 0.587, 0.114));
-                      vec3 targetPaint = uColorReplace * (originalLuminance / 0.78);
-                      // Smoothly blend between original texture and target color based on mask and transition state
-                      diffuseColor.rgb = mix(col, targetPaint, uUseReplace * yellowness);
+                  shader.fragmentShader = shader.fragmentShader.replace(
+                    '#include <map_fragment>',
+                    `
+                    #include <map_fragment>
+                    if (uUseReplace > 0.01) {
+                      vec3 col = diffuseColor.rgb;
+                      // Calculate a smooth 'yellowness' gradient factor to handle anti-aliasing edges and shadow transitions
+                      float yellowness = smoothstep(0.18, 0.32, (col.r + col.g) * 0.5 - col.b);
+                      if (yellowness > 0.01) {
+                        // Extract shading details to keep shadows/highlights photorealistic
+                        float originalLuminance = dot(col, vec3(0.299, 0.587, 0.114));
+                        vec3 targetPaint = uColorReplace * (originalLuminance / 0.78);
+                        // Smoothly blend between original texture and target color based on mask and transition state
+                        diffuseColor.rgb = mix(col, targetPaint, uUseReplace * yellowness);
+                      }
                     }
-                  }
-                  `
-                );
+                    `
+                  );
 
-                child.material.userData.shader = shader;
-              };
+                  child.material.userData.shader = shader;
+                };
+              }
             }
           }
+        });
+
+        // Find Vespa components for scroll-based explosion
+        parts = {
+          main: vespaModel.getObjectByName('Vespa_Main_0'),
+          wheel: vespaModel.getObjectByName('Vespa_Wheel_0'),
+          glass: vespaModel.getObjectByName('Vespa_Glass_0'),
+          light: vespaModel.getObjectByName('Vespa_Light_0')
+        };
+
+        // Store initial local positions of the parts
+        Object.keys(parts).forEach(key => {
+          if (parts[key]) {
+            initialPositions[key] = parts[key].position.clone();
+          } else {
+            initialPositions[key] = new THREE.Vector3();
+          }
+        });
+
+        // Center the model's geometry bounds inside the group
+        const box = new THREE.Box3().setFromObject(vespaModel);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        
+        vespaModel.position.sub(center);
+        // Offset so the wheels float slightly above our shadow floor
+        vespaModel.position.y += 0.2;
+
+        // Scale model to a standardized height fitting the viewport nicely
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 2.4 / maxDim; // Adjusted scale for beautiful layout fit
+        vespaModel.scale.setScalar(scale);
+
+        // Add to interactive group
+        interactiveGroup.add(vespaModel);
+        modelLoaded = true;
+
+        // Force render frame
+        renderer.render(scene, camera);
+      },
+      // Progress callback (for large files)
+      function (xhr) {
+        if (xhr.lengthComputable) {
+          const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
+          loadPercentText.textContent = percentComplete;
+          loadProgressBar.style.width = percentComplete + '%';
         }
-      });
-
-      // Find Vespa components for scroll-based explosion
-      parts = {
-        main: vespaModel.getObjectByName('Vespa_Main_0'),
-        wheel: vespaModel.getObjectByName('Vespa_Wheel_0'),
-        glass: vespaModel.getObjectByName('Vespa_Glass_0'),
-        light: vespaModel.getObjectByName('Vespa_Light_0')
-      };
-
-      // Store initial local positions of the parts
-      Object.keys(parts).forEach(key => {
-        if (parts[key]) {
-          initialPositions[key] = parts[key].position.clone();
+      },
+      // Error callback
+      function (error) {
+        console.error('An error occurred loading the Vespa model:', error);
+        if (retryCount < 2) {
+          retryCount++;
+          // Fallback relative path with a unique cache-busting timestamp query parameter
+          const fallbackUrl = 'vespa.glb?t=' + Date.now();
+          console.log(`Retrying model load (attempt ${retryCount}) with URL: ${fallbackUrl}`);
+          loadModel(fallbackUrl);
         } else {
-          initialPositions[key] = new THREE.Vector3();
+          console.error('Failed to load model after multiple retries.');
+          const preloaderStatus = document.querySelector('.preloader-status');
+          if (preloaderStatus) {
+            preloaderStatus.textContent = 'Error loading 3D model. Please refresh.';
+            preloaderStatus.style.color = '#ff5757';
+          }
         }
-      });
-
-      // Center the model's geometry bounds inside the group
-      const box = new THREE.Box3().setFromObject(vespaModel);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      
-      vespaModel.position.sub(center);
-      // Offset so the wheels float slightly above our shadow floor
-      vespaModel.position.y += 0.2;
-
-      // Scale model to a standardized height fitting the viewport nicely
-      const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 2.4 / maxDim; // Adjusted scale for beautiful layout fit
-      vespaModel.scale.setScalar(scale);
-
-      // Add to interactive group
-      interactiveGroup.add(vespaModel);
-      modelLoaded = true;
-
-      // Force render frame
-      renderer.render(scene, camera);
-    },
-    // Progress callback (for large files)
-    function (xhr) {
-      if (xhr.lengthComputable) {
-        const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
-        loadPercentText.textContent = percentComplete;
-        loadProgressBar.style.width = percentComplete + '%';
       }
-    },
-    // Error callback
-    function (error) {
-      console.error('An error occurred loading the Vespa model:', error);
-      // If public folder path isn't mapped, fallback to absolute workspace path if Vite resolves it
-      if (error) {
-        console.log('Retrying with alternative path...');
-      }
-    }
-  );
+    );
+  }
+
+  // Load the model using relative path and cache-busting default
+  loadModel('vespa.glb?v=lfs-fix');
 }
 
 // Lenis Smooth Momentum Scrolling Setup
